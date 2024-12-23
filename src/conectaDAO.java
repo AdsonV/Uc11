@@ -6,17 +6,26 @@ import javax.swing.JOptionPane;
 
 public class conectaDAO {
     
-    public Connection connectDB(){
-        Connection conn = null;
+    static Connection conn = null;
+    
+    public static void connectDB() throws ClassNotFoundException{
         
         try {
         
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/uc11?user=root&password=");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection("\"jdbc:mysql://localhost:3306/uc11","root","adsonsql");
             
         } catch (SQLException erro){
             JOptionPane.showMessageDialog(null, "Erro ConectaDAO" + erro.getMessage());
         }
-        return conn;
+       
     }
     
+    public static void desconectar(){
+        try {
+            conn.close();
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
 }

@@ -1,4 +1,8 @@
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 public class cadastroVIEW extends javax.swing.JFrame {
 
     /**
@@ -132,6 +136,8 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_cadastroNomeActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+        try {
+
         ProdutosDTO produto = new ProdutosDTO();
         String nome = cadastroNome.getText();
         String valor = cadastroValor.getText();
@@ -141,7 +147,11 @@ public class cadastroVIEW extends javax.swing.JFrame {
         produto.setStatus(status);
         
         ProdutosDAO produtodao = new ProdutosDAO();
-        produtodao.cadastrarProduto(produto);
+            produtodao.cadastrarProduto(produto);
+            
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(cadastroVIEW.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
