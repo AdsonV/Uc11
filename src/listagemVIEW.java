@@ -1,3 +1,5 @@
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -121,8 +123,7 @@ public class listagemVIEW extends javax.swing.JFrame {
         String id = id_produto_venda.getText();
         
         ProdutosDAO produtosdao = new ProdutosDAO();
-        
-        //produtosdao.venderProduto(Integer.parseInt(id));
+       
         listarProdutos();
     }//GEN-LAST:event_btnVenderActionPerformed
 
@@ -151,23 +152,32 @@ public class listagemVIEW extends javax.swing.JFrame {
 
     private void listarProdutos(){
         try {
-            ProdutosDAO produtosdao = new ProdutosDAO();
             
+            conectaDAO.connectDB();
+                
             DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
             model.setNumRows(0);
             
-            ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
-            
-            for(int i = 0; i < listagem.size(); i++){
-                model.addRow(new Object[]{
-                    listagem.get(i).getId(),
-                    listagem.get(i).getNome(),
-                    listagem.get(i).getValor(),
-                    listagem.get(i).getStatus()
-                });
-            }
+                        Statement st1 = conectaDAO.conn.createStatement();
+                        st1.executeQuery("SELECT * FROM produtos");
+                        ResultSet r1 = st1.getResultSet();
+                        
+                        while (r1.next()) {
+                            
+                            ProdutosDTO linha = new ProdutosDTO((r1.getInt("id")),(r1.getString("nome")),(r1.getInt("valor")),(r1.getString("status")));
+                            Object[] linha2 = new Object[]{(r1.getInt("id")),(r1.getString("nome")),(r1.getInt("valor")),(r1.getString("status"))};
+                                    
+                                    
+                            model.addRow(linha2);
+                            listaProdutos.setModel(model);
+                        
+                            ProdutosDAO.listagem.add(linha);
+                        }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
-    
+        ProdutosDAO.listagem.clear();
+       conectaDAO.desconectar();
     }
 }

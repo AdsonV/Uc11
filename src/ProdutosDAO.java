@@ -4,14 +4,15 @@ import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Statement;
 
 
 public class ProdutosDAO {
     
     String sql = ("INSERT INTO produtos (id,nome,valor,status)" + " VALUES (?,?,?,?)");
-    
     Connection conn;
-    ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+   static  ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+    
     
     public void cadastrarProduto (ProdutosDTO produto) throws ClassNotFoundException{
         
@@ -34,7 +35,25 @@ public class ProdutosDAO {
         conectaDAO.desconectar();
 }
     
-    public ArrayList<ProdutosDTO> listarProdutos(){
+    public ArrayList<ProdutosDTO> listarProdutos()throws ClassNotFoundException{
+        try{
+        
+                        conectaDAO.connectDB();
+        
+                        Statement st1 = conn.createStatement();
+                        st1.executeQuery("SELECT * FROM produtos");
+                        ResultSet r1 = st1.getResultSet();
+                        
+                        while (r1.next()) {
+                            
+                            ProdutosDTO linha = new ProdutosDTO((r1.getInt("id")),(r1.getString("nome")),(r1.getInt("valor")),(r1.getString("status")));
+                        
+                            listagem.add(linha);
+                        }
+        }catch(SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, "Não foi possível ver a lista dos produtos");
+        }
         
         return listagem;
     }       
