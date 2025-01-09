@@ -56,12 +56,12 @@ public class ProdutosDAO {
         return listagem;
     }       
     
-    public void venderProduto(String nome) throws SQLException, ClassNotFoundException
+    public void venderProduto(String id) throws SQLException, ClassNotFoundException
     {
         conectaDAO.connectDB();
         
         Statement st1 = conectaDAO.conn.createStatement();
-        st1.executeQuery("SELECT * FROM produtos WHERE nome LIKE '" + nome + "'");
+        st1.executeQuery("SELECT * FROM produtos WHERE id = " + id);
         ResultSet r1 = st1.getResultSet();
         
         while(r1.next()){
@@ -79,6 +79,16 @@ public class ProdutosDAO {
     public void listarProdutosVendidos() throws SQLException, ClassNotFoundException
     {
         
+        conectaDAO.connectDB();
+        
+        Statement st1 = conectaDAO.conn.createStatement();
+        st1.executeQuery("SELECT * FROM produtos WHERE status LIKE 'Vendido'");
+        ResultSet r1 = st1.getResultSet();
+        
+        while(r1.next())
+        {
+            
+        }
         
         conectaDAO.desconectar();
     }
