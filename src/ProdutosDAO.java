@@ -1,5 +1,4 @@
 import java.sql.PreparedStatement;
-import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +9,6 @@ import java.sql.Statement;
 public class ProdutosDAO {
     
     String sql = ("INSERT INTO produtos (id,nome,valor,status)" + " VALUES (?,?,?,?)");
-    Connection conn;
    static  ArrayList<ProdutosDTO> listagem = new ArrayList<>();
     
     
@@ -20,7 +18,7 @@ public class ProdutosDAO {
             
             conectaDAO.connectDB();
         
-        PreparedStatement stt = conn.prepareStatement(sql);
+        PreparedStatement stt = conectaDAO.conn.prepareStatement(sql);
         
                 stt.setInt(1,produto.getId());
                 stt.setString(2,produto.getNome().trim());
@@ -40,7 +38,7 @@ public class ProdutosDAO {
         
                         conectaDAO.connectDB();
         
-                        Statement st1 = conn.createStatement();
+                        Statement st1 = conectaDAO.conn.createStatement();
                         st1.executeQuery("SELECT * FROM produtos");
                         ResultSet r1 = st1.getResultSet();
                         
@@ -57,4 +55,31 @@ public class ProdutosDAO {
         
         return listagem;
     }       
+    
+    public void venderProduto(String nome) throws SQLException, ClassNotFoundException
+    {
+        conectaDAO.connectDB();
+        
+        Statement st1 = conectaDAO.conn.createStatement();
+        st1.executeQuery("SELECT * FROM produtos WHERE nome LIKE '" + nome + "'");
+        ResultSet r1 = st1.getResultSet();
+        
+        while(r1.next()){
+        PreparedStatement st9 = conectaDAO.conn.prepareStatement
+        ("REPLACE INTO produtos (id,nome,valor,status)" + " VALUES (?,?,?,?)");
+        
+       st9.setInt(0, r1.getInt("id"));
+       st9.setString(1, r1.getString("nome"));
+       st9.setInt(2, r1.getInt("valor"));
+       st9.setString(3, "Vendido");
+       }
+        conectaDAO.desconectar();
+    }
+    
+    public void listarProdutosVendidos() throws SQLException, ClassNotFoundException
+    {
+        
+        
+        conectaDAO.desconectar();
+    }
 }
