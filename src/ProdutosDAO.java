@@ -10,6 +10,7 @@ public class ProdutosDAO {
     
     String sql = ("INSERT INTO produtos (id,nome,valor,status)" + " VALUES (?,?,?,?)");
    static  ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+   static  ArrayList<ProdutosDTO> listaVendidos = new ArrayList<>();
     
     
     public void cadastrarProduto (ProdutosDTO produto) throws ClassNotFoundException{
@@ -33,7 +34,7 @@ public class ProdutosDAO {
         conectaDAO.desconectar();
 }
     
-    public ArrayList<ProdutosDTO> listarProdutos()throws ClassNotFoundException{
+    public static ArrayList<ProdutosDTO> listarProdutos()throws ClassNotFoundException{
         try{
         
                         conectaDAO.connectDB();
@@ -76,20 +77,26 @@ public class ProdutosDAO {
         conectaDAO.desconectar();
     }
     
-    public void listarProdutosVendidos() throws SQLException, ClassNotFoundException
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() throws SQLException, ClassNotFoundException
     {
-        
+        try{
         conectaDAO.connectDB();
         
         Statement st1 = conectaDAO.conn.createStatement();
         st1.executeQuery("SELECT * FROM produtos WHERE status LIKE 'Vendido'");
         ResultSet r1 = st1.getResultSet();
         
-        while(r1.next())
+        while (r1.next()) {
+                            
+                            ProdutosDTO linha = new ProdutosDTO((r1.getInt("id")),(r1.getString("nome")),(r1.getInt("valor")),(r1.getString("status")));
+                        
+                            listaVendidos.add(linha);
+                        }
+        }catch(SQLException e)
         {
-            
+            JOptionPane.showMessageDialog(null, "Não foi possível ver a lista dos produtos");
         }
         
-        conectaDAO.desconectar();
+        return listaVendidos;
     }
 }

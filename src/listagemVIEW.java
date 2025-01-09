@@ -4,6 +4,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class listagemVIEW extends javax.swing.JFrame {
@@ -123,7 +124,15 @@ public class listagemVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
+        String id = id_produto_venda.getText();
         
+        ProdutosDAO produtosdao = new ProdutosDAO();
+       
+        try {
+            produtosdao.venderProduto(id);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(listagemVIEW.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
@@ -157,23 +166,21 @@ public class listagemVIEW extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
             model.setNumRows(0);
             
-                        Statement st1 = conectaDAO.conn.createStatement();
-                        st1.executeQuery("SELECT * FROM produtos");
-                        ResultSet r1 = st1.getResultSet();
-                                
-                        while (r1.next()) {
+                       
+                            ProdutosDAO.listarProdutos();        
                             
-                            ProdutosDTO linha = new ProdutosDTO((r1.getInt("id")),(r1.getString("nome")),(r1.getInt("valor")),(r1.getString("status")));
-                            Object[] linha2 = new Object[]{(r1.getInt("id")),(r1.getString("nome")),(r1.getInt("valor")),(r1.getString("status"))};
-                                    
-                                    
-                            model.addRow(linha2);
+                            for (ProdutosDTO l : ProdutosDAO.listagem){
+                                
+                            Object[] linha = new Object[]{(l.getId()),(l.getNome()),(l.getValor()),(l.getStatus())};
+                                
+                            model.addRow(linha);
                             listaProdutos.setModel(model);
+                            }
                         
-                            ProdutosDAO.listagem.add(linha);
-                        }
-        } catch (Exception e) {
+                            
+        } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, "Não foi possível ver a lista dos produtos");
             e.printStackTrace();
         }
         ProdutosDAO.listagem.clear();
