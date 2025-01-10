@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class ProdutosDAO {
@@ -77,7 +79,7 @@ public class ProdutosDAO {
         conectaDAO.desconectar();
     }
     
-    public ArrayList<ProdutosDTO> listarProdutosVendidos() throws SQLException, ClassNotFoundException
+    public static ArrayList<ProdutosDTO> listarProdutosVendidos()
     {
         try{
         conectaDAO.connectDB();
@@ -92,9 +94,11 @@ public class ProdutosDAO {
                         
                             listaVendidos.add(linha);
                         }
-        }catch(SQLException e)
+        }catch(ClassNotFoundException ex)
         {
             JOptionPane.showMessageDialog(null, "Não foi possível ver a lista dos produtos");
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutosDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return listaVendidos;
