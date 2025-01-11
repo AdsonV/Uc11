@@ -1,6 +1,10 @@
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class listagemVIEW extends javax.swing.JFrame {
@@ -26,6 +30,7 @@ public class listagemVIEW extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         listaProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -38,6 +43,7 @@ public class listagemVIEW extends javax.swing.JFrame {
                 "ID", "Nome", "Valor", "Status"
             }
         ));
+        listaProdutos.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jScrollPane1.setViewportView(listaProdutos);
 
         jLabel1.setFont(new java.awt.Font("Lucida Fax", 0, 18)); // NOI18N
@@ -124,12 +130,16 @@ public class listagemVIEW extends javax.swing.JFrame {
         
         ProdutosDAO produtosdao = new ProdutosDAO();
        
-        listarProdutos();
+        try {
+            produtosdao.venderProduto(id);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(listagemVIEW.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-        //vendasVIEW vendas = new vendasVIEW(); 
-        //vendas.setVisible(true);
+        vendasVIEW vendas = new vendasVIEW(); 
+        vendas.setVisible(true);
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
@@ -158,23 +168,21 @@ public class listagemVIEW extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
             model.setNumRows(0);
             
-                        Statement st1 = conectaDAO.conn.createStatement();
-                        st1.executeQuery("SELECT * FROM produtos");
-                        ResultSet r1 = st1.getResultSet();
-                        
-                        while (r1.next()) {
+                       
+                            ProdutosDAO.listarProdutos();        
                             
-                            ProdutosDTO linha = new ProdutosDTO((r1.getInt("id")),(r1.getString("nome")),(r1.getInt("valor")),(r1.getString("status")));
-                            Object[] linha2 = new Object[]{(r1.getInt("id")),(r1.getString("nome")),(r1.getInt("valor")),(r1.getString("status"))};
-                                    
-                                    
-                            model.addRow(linha2);
+                            for (ProdutosDTO l : ProdutosDAO.listagem){
+                                
+                            Object[] linha = new Object[]{(l.getId()),(l.getNome()),(l.getValor()),(l.getStatus())};
+                                
+                            model.addRow(linha);
                             listaProdutos.setModel(model);
+                            }
                         
-                            ProdutosDAO.listagem.add(linha);
-                        }
-        } catch (Exception e) {
+                            
+        } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, "Não foi possível ver a lista dos produtos");
             e.printStackTrace();
         }
         ProdutosDAO.listagem.clear();
